@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+multipass launch \
+    --cloud-init ~/git/canonical/telco/telco-hacks/cloud-init/integration.yaml \
+    --memory 8G \
+    --cpus 2 \
+    --disk 80G \
+    --mount ~/git/canonical/:/home/ubuntu/canonical/ \
+    --timeout 1200 \
+    --name telco-integration \
+    22.04
+
+multipass transfer ~/.tmux.conf telco-integration:~/.tmux.conf

@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+WEBUI_IP=$(juju show-unit webui/0 | grep "^  address" | cut -d' ' -f 4); echo "$WEBUI_IP"
