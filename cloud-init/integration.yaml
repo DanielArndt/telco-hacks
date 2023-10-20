@@ -23,13 +23,13 @@ snap:
   - snap install multipass-sshfs
   - snap install btop
   - snap install --classic ripgrep
-  - snap install tox
   - snap refresh
 
 runcmd:
 - DEBIAN_FRONTEND=noninteractive apt-get remove -y landscape-client landscape-common adwaita-icon-theme humanity-icon-theme
 - DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 - DEBIAN_FRONTEND=noninteractive apt-get -y autoremove
+# - sudo -u ubuntu pip install tox # FIXME: Why doesn't this work!?
 
 - |
   # disable swap
@@ -118,7 +118,7 @@ runcmd:
 
 - |
   # k9s
-  sudo -u ubuntu curl -sS https://webinstall.dev/k9s | bash
+  curl -sS https://webinstall.dev/k9s | bash
 
 - |
   # telco
