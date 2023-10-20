@@ -10,4 +10,4 @@ multipass launch \
     --name telco-integration \
     22.04
 
-multipass transfer ~/.tmux.conf telco-integration:~/.tmux.conf
+multipass transfer ~/.tmux.conf telco-integration:/home/ubuntu
