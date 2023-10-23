@@ -29,7 +29,6 @@ runcmd:
 - DEBIAN_FRONTEND=noninteractive apt-get remove -y landscape-client landscape-common adwaita-icon-theme humanity-icon-theme
 - DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 - DEBIAN_FRONTEND=noninteractive apt-get -y autoremove
-# - sudo -u ubuntu pip install tox # FIXME: Why doesn't this work!?
 
 - |
   # disable swap
