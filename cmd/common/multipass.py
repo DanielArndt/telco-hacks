@@ -49,13 +49,13 @@ class MultipassCtl:
 
     def add_ssh_key(self):
         pubkey = sh.cat(f"{HOME_DIR}/.ssh/id_rsa.pub").rstrip()
-        if not self.pubkey_in_authorized_keys(pubkey):
+        if not self.is_pubkey_in_authorized_keys(pubkey):
             logging.info("Pubkey not found in authorized_keys, adding it")
             run_cmd(
                 f"multipass exec {self.instance_name} -- bash -c 'echo {pubkey} >> /home/ubuntu/.ssh/authorized_keys'"
             )
 
-    def pubkey_in_authorized_keys(self, pubkey):
+    def is_pubkey_in_authorized_keys(self, pubkey):
         try:
             sh.multipass.exec(
                 self.instance_name,
