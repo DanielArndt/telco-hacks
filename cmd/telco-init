@@ -11,6 +11,7 @@ def main():
     multipass_instance = MultipassCtl(MULTIPASS_INSTANCE_NAME)
     if not multipass_instance.exists():
         multipass_instance.launch()
+    # These should all be idempotent, so no problem running them again and again.
     multipass_instance.add_mounts()
     multipass_instance.transfer_files()
     multipass_instance.add_ssh_key()
