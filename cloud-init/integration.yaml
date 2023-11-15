@@ -1,15 +1,15 @@
 package_update: true
 
-packages:
-- python3-pip
-- jq
-- sysstat
-- zsh
-- fzf
-- gnome-keyring
-- kitty-terminfo
-- sshfs
-- bat
+# packages:
+# - python3-pip
+# - jq
+# - sysstat
+# - zsh
+# - fzf
+# - gnome-keyring
+# - kitty-terminfo
+# - sshfs
+# - bat
 
 snap:
   commands:
@@ -17,12 +17,12 @@ snap:
   - snap install microk8s --channel 1.27-strict/stable
   - snap alias microk8s.kubectl kubectl
   - snap alias microk8s.kubectl k
-  - snap install --classic charmcraft
-  - snap install jhack --channel=latest/stable
-  - snap install yq
-  - snap install multipass-sshfs
-  - snap install btop
-  - snap install --classic ripgrep
+  # - snap install --classic charmcraft
+  # - snap install jhack --channel=latest/stable
+  # - snap install yq
+  # - snap install multipass-sshfs
+  # - snap install btop
+  # - snap install --classic ripgrep
   - snap refresh
 
 runcmd:
@@ -62,7 +62,7 @@ runcmd:
   sudo -u ubuntu git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~ubuntu/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
   sudo -u ubuntu sed -i 's/plugins=(git)/plugins=(fzf git zsh-autosuggestions zsh-syntax-highlighting virtualenv colored-man-pages juju colorize)/g' ~ubuntu/.zshrc
   sudo -u ubuntu echo 'export PATH=$PATH:$HOME/.local/bin' >> ~ubuntu/.zshrc
-  sudo -u ubuntu pip install ops-scenario
+  sudo -u ubuntu pip install ops-scenario tox
   sudo -u ubuntu wget -P ~ubuntu/.oh-my-zsh/themes/ https://raw.githubusercontent.com/Abuelodelanada/charm-dev-utils/main/zsh_themes/juju.zsh-theme
   sudo -u ubuntu sed -i 's/ZSH_THEME="robbyrussell"/ZSH_THEME="juju"/g' ~ubuntu/.zshrc
 
@@ -83,7 +83,7 @@ runcmd:
   # setup microk8s and bootstrap
   sudo usermod -a -G snap_microk8s ubuntu
   sudo -u ubuntu mkdir -p /home/ubuntu/.kube
-  adduser ubuntu microk8s
+  # adduser ubuntu microk8s
   microk8s status --wait-ready
 
   # microk8s.enable metrics-server
@@ -92,17 +92,16 @@ runcmd:
   # The dns addon will restart the api server so you may see a blip in the availability
   # Separating addons to avoid errors such as
   # dial tcp 127.0.0.1:16443: connect: connection refused
-  microk8s.enable dns
-  microk8s.enable storage
+  microk8s.enable hostpath-storage
+  microk8s.kubectl rollout status deployments/hostpath-provisioner -n kube-system -w --timeout=600s
   # microk8s.enable metallb:10.0.0.2-10.0.0.20
   microk8s.enable rbac
+  microk8s.enable dns
   microk8s.kubectl rollout status deployments/coredns -n kube-system -w --timeout=600s
 
-  # microk8s.enable hostpath-storage
-  # microk8s.enable ingress
+  microk8s.enable ingress
   # wait for storage, ingress to become available
-  microk8s.kubectl rollout status deployments/hostpath-provisioner -n kube-system -w --timeout=600s
-  # microk8s.kubectl rollout status daemonsets/nginx-ingress-microk8s-controller -n ingress -w --timeout=600s
+  microk8s.kubectl rollout status daemonsets/nginx-ingress-microk8s-controller -n ingress -w --timeout=600s
 
   sudo -u ubuntu juju bootstrap microk8s microk8s
 

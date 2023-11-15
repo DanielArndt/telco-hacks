@@ -24,12 +24,12 @@ class MultipassCtl:
         mp_launch_command = f"""multipass launch \
             --cloud-init {HOME_DIR}/git/canonical/telco/telco-hacks/cloud-init/integration.yaml \
             --memory 8G \
-            --cpus 2 \
+            --cpus 4 \
             --disk 80G \
             --mount {HOME_DIR}/git/canonical/:/home/ubuntu/canonical/ \
             --timeout 1200 \
             --name {self.instance_name} \
-            22.04
+            file://{HOME_DIR}/git/canonical/telco/telco-hacks/image/telco/output-qemu/packer-qemu
         """
         run_cmd(mp_launch_command)
 
