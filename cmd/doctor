@@ -1,0 +1,76 @@
+#!/usr/bin/env python3
+import logging
+import re
+from collections import namedtuple
+from dataclasses import dataclass
+
+import sh
+
+NET_CLS_CGROUP_V1_EXPLANATION = """
+When net_cls is mounted as a cgroup v1, it interferes with lxd.
+
+This is an issue with the PIA Linux client, for example.
+
+See https://github.com/pia-foss/desktop/issues/50 for more details.
+"""
+
+
+@dataclass
+class Mount:
+    fs_spec: str
+    fs_file: str
+    fs_vfstype: str
+    fs_mntopts: str
+
+
+def ask(question, explanation=None) -> bool:
+    options = ["y", "n"]
+    if explanation:
+        options.append("?")
+    while True:
+        answer = input(f"{question} [{'/'.join(options)}]")
+        if answer == "y":
+            return True
+        elif answer == "n":
+            return False
+        elif answer == "?" and explanation:
+            print(explanation)
+        else:
+            print(f"Please answer with [{'/'.join(options)}]")
+
+
+def detect_cgroup_v1():
+    logging.info("Detecting cgroup v1 mounts which may be messing with cgroup v2")
+    mounts = []
+    with open("/proc/mounts") as f:
+        for line in f:
+            parsed = line.split()
+            # Columns beyond 3 are ignored because they are dummy values meant
+            # to match other filesystem files. They are not valid.
+            mounts.append(Mount(parsed[0], parsed[1], parsed[2], parsed[3]))
+
+    cgroup_v1 = []
+    for mount in mounts:
+        if not mount.fs_file.startswith("/sys/fs/cgroup"):
+            continue
+        if mount.fs_vfstype == "cgroup":
+            cgroup_v1.append(mount)
+            logging.warning(f"Detected a cgroup v1 `{mount}`")
+
+    for mount in cgroup_v1:
+        if mount.fs_file == "/sys/fs/cgroup/net_cls":
+            if ask(
+                "net_cls is mounted as a cgroup v1. Do you want to umount net_cls? This may break something else.",
+                explanation=NET_CLS_CGROUP_V1_EXPLANATION,
+            ):
+                with sh.contrib.sudo:
+                    sh.umount("/sys/fs/cgroup/net_cls")
+
+
+def main():
+    logging.basicConfig(level=logging.INFO)
+    detect_cgroup_v1()
+
+
+if __name__ == "__main__":
+    main()

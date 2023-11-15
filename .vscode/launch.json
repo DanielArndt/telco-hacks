@@ -12,6 +12,15 @@
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/cmd",
             "justMyCode": true
+        },
+        {
+            "name": "doctor",
+            "type": "python",
+            "request": "launch",
+            "program": "doctor",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/cmd",
+            "justMyCode": true
         }
-    ]
+    ],
 }
