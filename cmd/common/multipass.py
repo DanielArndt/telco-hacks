@@ -33,6 +33,10 @@ class MultipassCtl:
         """
         run_cmd(mp_launch_command)
 
+    def launch_if_not_exists(self):
+        if not self.exists():
+            self.launch()
+
     def add_mounts(self):
         if not self.has_mount("/home/ubuntu/canonical"):
             self.mount_canonical()

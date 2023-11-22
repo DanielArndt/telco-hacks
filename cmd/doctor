@@ -39,7 +39,7 @@ def ask(question, explanation=None) -> bool:
             print(f"Please answer with [{'/'.join(options)}]")
 
 
-def detect_cgroup_v1():
+def detect_cgroup_v1() -> None:
     logging.info("Detecting cgroup v1 mounts which may be messing with cgroup v2")
     mounts = []
     with open("/proc/mounts") as f:
@@ -67,7 +67,7 @@ def detect_cgroup_v1():
                     sh.umount("/sys/fs/cgroup/net_cls")
 
 
-def main():
+def main() -> None:
     logging.basicConfig(level=logging.INFO)
     detect_cgroup_v1()
 
