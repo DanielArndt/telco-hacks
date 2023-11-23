@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S sh -c '"`dirname $0`/../.venv/bin/python" "$0" "$@"'
 import logging
 import re
 from collections import namedtuple
@@ -28,7 +28,7 @@ def ask(question, explanation=None) -> bool:
     if explanation:
         options.append("?")
     while True:
-        answer = input(f"{question} [{'/'.join(options)}]")
+        answer = input(f"{question} [{'/'.join(options)}] ")
         if answer == "y":
             return True
         elif answer == "n":
